@@ -15,26 +15,28 @@ import {
 // Mock localStorage
 const localStorageMock = {
   store: new Map<string, string>(),
-  getItem: vi.fn((key: string) => localStorageMock.store.get(key) || null),
-  setItem: vi.fn((key: string, value: string) => {
+  getItem: vi.fn().mockImplementation((key: string) => localStorageMock.store.get(key) || null),
+  setItem: vi.fn().mockImplementation((key: string, value: string) => {
     localStorageMock.store.set(key, value);
   }),
-  removeItem: vi.fn((key: string) => {
+  removeItem: vi.fn().mockImplementation((key: string) => {
     localStorageMock.store.delete(key);
   }),
-  clear: vi.fn(() => {
+  clear: vi.fn().mockImplementation(() => {
     localStorageMock.store.clear();
   }),
 };
 
 // Mock crypto.randomUUID
-const mockUUID = vi.fn(() => 'test-uuid-123');
-Object.defineProperty(global, 'crypto', {
+const mockUUID = vi.fn((): string => 'test-uuid-123');
+Object.defineProperty(globalThis, 'crypto', {
   value: { randomUUID: mockUUID },
+  writable: true,
 });
 
-Object.defineProperty(global, 'localStorage', {
+Object.defineProperty(globalThis, 'localStorage', {
   value: localStorageMock,
+  writable: true,
 });
 
 // Sample test data
